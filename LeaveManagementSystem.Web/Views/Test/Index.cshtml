@@ -1,0 +1,12 @@
+﻿@model TestViewModel
+@{
+    ViewData["Title"] = "Test";
+}
+
+<h1>Hello test </h1>
+<h2>Your Name is :@Model.Name</h2>
+
+@if (Model.DateOfBirth.HasValue)
+{
+    <h2>Your DOB is : @Model.DateOfBirth</h2>
+}
