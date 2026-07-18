@@ -5,10 +5,15 @@ using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Models.LeaveTypes;
 using AutoMapper;
 using LeaveManagementSystem.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using LeaveManagementSystem.Web.Common;
 
+
+[Authorize(Roles = Roles.Administrator)]
 public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Controller
 {
-   
+    
+
     private const string NameExistsValidationMessage = "This Leave type already exists in database";
     
 
