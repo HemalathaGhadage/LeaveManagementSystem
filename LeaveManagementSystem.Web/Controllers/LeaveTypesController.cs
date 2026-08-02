@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystem.Web.Data;
 using LeaveManagementSystem.Web.Models.LeaveTypes;
 using AutoMapper;
-using LeaveManagementSystem.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using LeaveManagementSystem.Web.Common;
+using LeaveManagementSystem.Web.Services.LeaveTypes;
 
 
 [Authorize(Roles = Roles.Administrator)]
