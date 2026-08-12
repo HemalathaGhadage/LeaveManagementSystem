@@ -1,20 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using LeaveManagementSystem.Web.Data;
+#nullable disable
 
 namespace LeaveManagementSystem.Web.Areas.Identity.Pages.Account;
 
@@ -34,26 +20,26 @@ public class LoginModel : PageModel
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [BindProperty]
-    public InputModel Input { get; set; } = default!;
+    public InputModel Input { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    public IList<AuthenticationScheme>? ExternalLogins { get; set; }
+    public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
-    public string? ReturnUrl { get; set; }
+    public string ReturnUrl { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
     /// </summary>
     [TempData]
-    public string? ErrorMessage { get; set; }
+    public string ErrorMessage { get; set; }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -67,7 +53,7 @@ public class LoginModel : PageModel
         /// </summary>
         [Required]
         [EmailAddress]
-        public string Email { get; set; } = default!;
+        public string Email { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -75,7 +61,7 @@ public class LoginModel : PageModel
         /// </summary>
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; } = default!;
+        public string Password { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -85,7 +71,7 @@ public class LoginModel : PageModel
         public bool RememberMe { get; set; }
     }
 
-    public async Task OnGetAsync(string? returnUrl = null)
+    public async Task OnGetAsync(string returnUrl = null)
     {
         if (!string.IsNullOrEmpty(ErrorMessage))
         {
@@ -102,7 +88,7 @@ public class LoginModel : PageModel
         ReturnUrl = returnUrl;
     }
 
-    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");
 

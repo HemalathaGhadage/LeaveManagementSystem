@@ -1,28 +1,22 @@
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Models.LeaveTypes;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using LeaveManagementSystem.Web.Common;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
+using Microsoft.Extensions.Logging;
 
 
 [Authorize(Roles = Roles.Administrator)]
-public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Controller
+public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices , ILogger<LeaveTypesController> _logger) : Controller
 {
-    
+
 
     private const string NameExistsValidationMessage = "This Leave type already exists in database";
-    
+
 
 
 
     // GET: LEAVETYPES
-    public async Task<IActionResult> Index()   
+    public async Task<IActionResult> Index()
     {
-        var viewData =await _leaveTypesServices.GetAll();
+        _logger.LogInformation("Loading Leave types");
+        var viewData = await _leaveTypesServices.GetAll();
         return View(viewData);
     }
 
@@ -34,7 +28,7 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
             return NotFound();
         }
 
-        var leavetype =await _leaveTypesServices.Get<LeaveTypeReadOnlyVM>(id.Value);
+        var leavetype = await _leaveTypesServices.Get<LeaveTypeReadOnlyVM>(id.Value);
         if (leavetype == null)
         {
             return NotFound();
@@ -56,20 +50,22 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(LeaveTypeCreateVM leaveTypeCreateVM)
     {
-       if(await _leaveTypesServices.CheckIfLeaveTypeNameExists(leaveTypeCreateVM.Name))
+        if (await _leaveTypesServices.CheckIfLeaveTypeNameExists(leaveTypeCreateVM.Name))
         {
             ModelState.AddModelError(nameof(leaveTypeCreateVM.Name), NameExistsValidationMessage);
-           
+
         }
         if (ModelState.IsValid)
         {
-           await  _leaveTypesServices.Create(leaveTypeCreateVM);
+            
+            await _leaveTypesServices.Create(leaveTypeCreateVM);
             return RedirectToAction(nameof(Index));
         }
+        _logger.LogWarning("Leave type attempt failed due to invalidity");
         return View(leaveTypeCreateVM);
     }
 
-  
+
 
     // GET: LEAVETYPES/Edit/5
     public async Task<IActionResult> Edit(int? id)
@@ -80,11 +76,11 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
         }
 
         var leavetype = await _leaveTypesServices.Get<LeaveTypeEditVM>(id.Value);
-            if (leavetype == null)
-            {
-                return NotFound();
-            }
-            
+        if (leavetype == null)
+        {
+            return NotFound();
+        }
+
 
         return View(leavetype);
     }
@@ -94,7 +90,7 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id , LeaveTypeEditVM leaveTypeEditVM)
+    public async Task<IActionResult> Edit(int id, LeaveTypeEditVM leaveTypeEditVM)
     {
         if (id != leaveTypeEditVM.Id)
         {
@@ -111,8 +107,8 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
         {
             try
             {
-              await  _leaveTypesServices.Edit(leaveTypeEditVM);
-               
+                await _leaveTypesServices.Edit(leaveTypeEditVM);
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -130,7 +126,7 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
         return View(leaveTypeEditVM);
     }
 
-   
+
 
     // GET: LEAVETYPES/Delete/5
     public async Task<IActionResult> Delete(int? id)
@@ -146,7 +142,7 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
             return NotFound();
         }
 
-        
+
 
         return View(leavetype);
     }
@@ -156,9 +152,9 @@ public class LeaveTypesController(ILeaveTypesServices _leaveTypesServices) : Con
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-       await  _leaveTypesServices.Remove(id.Value);
+        await _leaveTypesServices.Remove(id.Value);
         return RedirectToAction(nameof(Index));
     }
 
-    
+
 }

@@ -1,18 +1,10 @@
-﻿using LeaveManagementSystem.Web.Common;
-using LeaveManagementSystem.Web.Models.LeaveAllocations;
-using LeaveManagementSystem.Web.Services.LeaveAllocations;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
-
-namespace LeaveManagementSystem.Web.Controllers
+﻿namespace LeaveManagementSystem.Web.Controllers
 {
     [Authorize]
-    public class LeaveAllocationController(ILeaveAllocationsService _leaveAllocationsService ,
+    public class LeaveAllocationController(ILeaveAllocationsService _leaveAllocationsService,
         ILeaveTypesServices _leaveTypesService) : Controller
     {
-        [Authorize(Roles = Roles.Administrator)]    
+        [Authorize(Roles = Roles.Administrator)]
         public async Task<IActionResult> Index()
         {
 
@@ -32,18 +24,18 @@ namespace LeaveManagementSystem.Web.Controllers
             return RedirectToAction(nameof(Details), new { userId = id });
 
         }
-    
+
         public async Task<IActionResult> EditAllocation(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
             var allocation = await _leaveAllocationsService.GetEmployeeAllocation(id.Value);
-            if(allocation == null)
+            if (allocation == null)
             {
                 return NotFound();
-            }   
+            }
 
             return View(allocation);
         }
@@ -67,14 +59,14 @@ namespace LeaveManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Details), new { userId = allocation.Employee.Id });
             }
             var days = allocation.Days;
-             allocation = await _leaveAllocationsService.GetEmployeeAllocation(allocation.Id);
+            allocation = await _leaveAllocationsService.GetEmployeeAllocation(allocation.Id);
             allocation.Days = days;
             return View(allocation);
         }
 
-            
-            public async Task<IActionResult> Details(string? userId)
-        { 
+
+        public async Task<IActionResult> Details(string? userId)
+        {
             var employeeVm = await _leaveAllocationsService.GetEmployeeAllocations(userId);
             return View(employeeVm);
         }

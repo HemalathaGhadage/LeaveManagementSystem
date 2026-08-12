@@ -1,18 +1,10 @@
-﻿using LeaveManagementSystem.Web.Common;
-using LeaveManagementSystem.Web.Data;
-using LeaveManagementSystem.Web.Models.LeaveRequests;
-using LeaveManagementSystem.Web.Services.LeaveRequests;
-using LeaveManagementSystem.Web.Services.LeaveTypes;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LeaveManagementSystem.Web.Controllers
 {
     [Authorize]
-    public class LeaveRequestsController(ILeaveTypesServices _leaveTypeService ,
-        ILeaveRequestsService _leaveRequestsService ) : Controller
+    public class LeaveRequestsController(ILeaveTypesServices _leaveTypeService,
+        ILeaveRequestsService _leaveRequestsService) : Controller
     {
         //employee View Requests
         public async Task<IActionResult> Index()
@@ -24,9 +16,9 @@ namespace LeaveManagementSystem.Web.Controllers
         //employee Create Requests
         public async Task<IActionResult> Create(int? leaveTypeId)
         {
-           // if(leaveTypeId !=null)
+            // if(leaveTypeId !=null)
             var leaveTypes = await _leaveTypeService.GetAll();
-            var leaveTYpesList = new SelectList(leaveTypes, "Id", "Name" ,leaveTypeId);
+            var leaveTYpesList = new SelectList(leaveTypes, "Id", "Name", leaveTypeId);
             var model = new LeaveRequestCreateVM
             {
                 StartDate = DateOnly.FromDateTime(DateTime.Now),
@@ -58,7 +50,7 @@ namespace LeaveManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var leaveTypes = await _leaveTypeService.GetAll();
-            
+
             model.LeaveTypes = new SelectList(leaveTypes, "Id", "Name");
 
 
@@ -76,7 +68,7 @@ namespace LeaveManagementSystem.Web.Controllers
 
         //Admin/Supervisor review Requests
         [Authorize(Policy = "AdminSupervisorOnly")]
-        
+
         public async Task<IActionResult> ListRequests()
         {
             var model = await _leaveRequestsService.AdminGetAllLeaveRequests();
@@ -97,7 +89,7 @@ namespace LeaveManagementSystem.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Review(int id, bool approved)
         {
-           await  _leaveRequestsService.ReviewLeaveRequest(id, approved);
+            await _leaveRequestsService.ReviewLeaveRequest(id, approved);
             return RedirectToAction(nameof(ListRequests));
         }
 
