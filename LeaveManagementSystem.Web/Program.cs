@@ -1,4 +1,5 @@
 using LeaveManagementSystem.Application;
+using LeaveManagementSystem.Data;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,18 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 DataServiceRegistration.AddDataServices(builder.Services, builder.Configuration);
 ApplicationServiceRegistration.AddApplicationServices(builder.Services);
 
-builder.Host.UseSerilog((context, configuration) => 
-            configuration.WriteTo.Console()
-            .ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog((ctx, config) =>
+    config.WriteTo.Console()
+    .ReadFrom.Configuration(ctx.Configuration)
+);
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminSupervisorOnly", policy =>
     {
         policy.RequireRole(Roles.Administrator, Roles.Supervisor);
-
     });
-
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -26,13 +26,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
-    
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-
-
 
 var app = builder.Build();
 
@@ -53,7 +52,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
